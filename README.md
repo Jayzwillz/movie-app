@@ -1,12 +1,58 @@
-# React + Vite
+# 🎬 **XZMovies**  
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A **React-based Movie App** that allows users to search for movies, browse by genres, view top-rated films, and manage a personal watchlist. The app fetches data from **TMDB API** and offers a smooth, interactive UI with Tailwind CSS.  
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 **Features**
+- 🔍 **Search Movies** by title  
+- 📂 **Browse by Genres**  
+- ⭐ **Top-Rated Movies**  
+- 📋 **Add/Remove Movies from Watchlist**  
+- 🎥 **Movie Details Page** with trailers & cast  
+- ⚡ **Fast & Responsive UI** (Tailwind CSS + React Router)  
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🖥 **Live Demo**
+🔗 [XZMovies on Netlify & Vercel](https://xzmovies.netlify.app)  
+
+---
+
+## ⚙️ **Tech Stack**
+- **Frontend:** React, React Router, Redux Toolkit  
+- **Styling:** Tailwind CSS  
+- **API:** [TMDB API](https://www.themoviedb.org/)  
+- **State Management:** Redux Toolkit (for Watchlist)  
+- **Deployment:** Netlify & Vercel  
+
+---
+
+# 🛠 Upcoming Features  
+
+- 🎭 **Actors & Cast Details Page**  
+- 📅 **Upcoming Movies Section**  
+- 📺 **Streaming Availability Info**  
+- 🌙 **Dark Mode Toggle**  
+
+---
+
+## 🙌 Contributions  
+
+Contributions are welcome! If you’d like to improve **XZMovies**, follow these steps:  
+
+1. **Fork** this repository  
+2. **Create a new branch** (`feature-new`)  
+3. **Commit changes** & push  
+4. Open a **Pull Request**  
+
+---
+
+## 📩 Contact  
+
+📧 **Email:** jahswill4jahs@gmail.com  
+🐦 **Twitter:** [@jahswill1914](https://x.com/Jahswill1914)  
+💼 **LinkedIn:** [Jayzwillz](https://www.linkedin.com/in/jayzwillz/ ) 
+
+---
+
