@@ -1,4 +1,4 @@
-name: Deploy React App to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -6,29 +6,30 @@ on:
       - main
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Check Git version
-        run: git --version
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'  # or try '14.x' or '16.x'
+          node-version: 18
+
+      - name: Create .env file
+        run: |
+          echo "VITE_TMDB_API_KEY=${{ secrets.VITE_TMDB_API_KEY }}" >> .env
+          echo "VITE_TMDB_ACCESS_TOKEN=${{ secrets.VITE_TMDB_ACCESS_TOKEN }}" >> .env
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build React App
+      - name: Build project
         run: npm run build
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
-          folder: dist  # Update this path if different
+          folder: dist
