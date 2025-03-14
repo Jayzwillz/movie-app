@@ -10,7 +10,7 @@ const Genre = () => {
   const [loading, setLoading] = useState(false);
   const [showScroll, setShowScroll] = useState(false);
 
-  const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+  const API_KEY = import.meta.env.VITE_API_KEY;
 
   // Fetch genres from TMDB API
   useEffect(() => {
