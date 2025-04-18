@@ -72,6 +72,39 @@ const MovieDetail = () => {
     fetchMovieDetails();
   }, [id]);
 
+  const allFlatrateProviders = [];
+
+for (const country in streamingProviders) {
+  const region = streamingProviders[country];
+  if (region?.flatrate) {
+    region.flatrate.forEach((provider) => {
+      // Avoid duplicates (some providers exist in many regions)
+      if (!allFlatrateProviders.some(p => p.provider_id === provider.provider_id)) {
+        allFlatrateProviders.push(provider);
+      }
+    });
+  }
+}
+
+const getProviderLink = (providerName, movieTitle) => {
+  const domainMap = {
+    "Netflix": "https://www.netflix.com",
+    "Amazon Prime Video": "https://www.primevideo.com",
+    "Disney Plus": "https://www.disneyplus.com",
+    "Hulu": "https://www.hulu.com",
+    "HBO Max": "https://www.max.com",
+    "Apple TV": "https://tv.apple.com",
+    "Peacock": "https://www.peacocktv.com",
+    "Paramount Plus": "https://www.paramountplus.com",
+    // Add more as needed
+  };
+
+  return domainMap[providerName] || `https://www.google.com/search?q=${encodeURIComponent(movieTitle)}+on+${encodeURIComponent(providerName)}`;
+};
+
+
+   
+
   if (!movie) return <p className="text-center text-gray-400">Loading...</p>;
 
   return (
@@ -227,6 +260,34 @@ const MovieDetail = () => {
           </div>
         )}
 
+        {/* Streaming Providers */}
+        {allFlatrateProviders.length > 0 && (
+  <div className="mt-6">
+    <h3 className="text-lg font-bold">📺 Available on</h3>
+    <div className="flex gap-4 mt-2 flex-wrap">
+      {allFlatrateProviders.map((provider) => (
+        <a
+          key={provider.provider_id}
+          href={getProviderLink(provider.provider_name, movie.title)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:scale-105 transition"
+        >
+          <img
+            src={`https://image.tmdb.org/t/p/w92${provider.logo_path}`}
+            alt={provider.provider_name}
+            title={provider.provider_name}
+            className="w-12 h-12 rounded-md"
+          />
+        </a>
+      ))}
+    </div>
+  </div>
+)}
+
+
+
+
         {/* Recommended Movies */}
         {recommendedMovies.length > 0 && (
           <div className="mt-6">
@@ -273,25 +334,6 @@ const MovieDetail = () => {
           </div>
         )}
 
-        {/* Streaming Providers */}
-        {streamingProviders &&
-          streamingProviders.US &&
-          streamingProviders.US.flatrate && (
-            <div className="mt-6">
-              <h3 className="text-lg font-bold">📺 Available on</h3>
-              <div className="flex gap-4 mt-2">
-                {streamingProviders.US.flatrate.map((provider) => (
-                  <img
-                    key={provider.provider_id}
-                    src={`https://image.tmdb.org/t/p/w92${provider.logo_path}`}
-                    alt={provider.provider_name}
-                    title={provider.provider_name}
-                    className="w-12 h-12 rounded-md"
-                  />
-                ))}
-              </div>
-            </div>
-          )}
       </div>
     </div>
   );
