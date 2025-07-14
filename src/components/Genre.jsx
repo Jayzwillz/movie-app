@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { FaArrowUp } from "react-icons/fa";
 import MovieCard from "./MovieCard";
 
@@ -110,14 +111,19 @@ const Genre = () => {
       {/* Movies List */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {movies.map((movie) => (
-          <MovieCard
+          <Link
             key={movie.id}
-            id={movie.id}
-            title={movie.title}
-            poster={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-            overview={movie.overview}
-            textAlignment="left" // Pass prop for left-aligned text
-          />
+            to={`/movie/${movie.id}`}
+            className="block hover:scale-105 transition transform"
+          >
+            <MovieCard
+              id={movie.id}
+              title={movie.title}
+              poster={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+              overview={movie.overview}
+              textAlignment="left" // Pass prop for left-aligned text
+            />
+          </Link>
         ))}
       </div>
 

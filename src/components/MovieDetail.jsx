@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { addToWatchlist, removeFromWatchlist } from "../redux/watchlistSlice";
+import { addToWatchlist, removeFromWatchlist, addToWatchlistAsync, removeFromWatchlistAsync } from "../redux/watchlistSlice";
 import { ACCESS_TOKEN, BASE_URL } from "../config";
 import { FaArrowLeft, FaPlus, FaCheck } from "react-icons/fa";
 
@@ -10,7 +10,8 @@ const MovieDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const watchlist = useSelector((state) => state.watchlist);
+  const { items: watchlist, isLoading: watchlistLoading } = useSelector((state) => state.watchlist);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   const [movie, setMovie] = useState(null);
   const [credits, setCredits] = useState([]);
@@ -19,7 +20,12 @@ const MovieDetail = () => {
   const [similarMovies, setSimilarMovies] = useState([]);
   const [streamingProviders, setStreamingProviders] = useState(null);
 
-  const isInWatchlist = watchlist.some((m) => m.id === parseInt(id));
+  // Improved watchlist checking with better ID comparison
+  const isInWatchlist = watchlist.some((m) => {
+    const movieId = (m.movieId || m.id).toString();
+    const currentId = id.toString();
+    return movieId === currentId;
+  });
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
@@ -178,8 +184,30 @@ const getProviderLink = (providerName, movieTitle) => {
             {/* Watchlist Button */}
             <button
               onClick={() => {
+                // If user is not authenticated, redirect to login with return URL
+                if (!isAuthenticated) {
+                  // Store the movie data in localStorage to add after login
+                  const movieData = {
+                    id: movie.id,
+                    movieId: movie.id.toString(),
+                    title: movie.title,
+                    // Pass complete poster URL for consistency
+                    poster: movie.poster_path
+                      ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                      : "https://via.placeholder.com/500x750?text=No+Image",
+                    overview: movie.overview,
+                    vote_average: movie.vote_average,
+                    year: movie.release_date ? new Date(movie.release_date).getFullYear().toString() : new Date().getFullYear().toString(),
+                  };
+                  localStorage.setItem('pendingWatchlistItem', JSON.stringify(movieData));
+                  localStorage.setItem('returnUrl', `/movie/${movie.id}`);
+                  navigate('/login');
+                  return;
+                }
+
                 const movieData = {
                   id: movie.id,
+                  movieId: movie.id.toString(),
                   title: movie.title,
                   // Pass complete poster URL for consistency
                   poster: movie.poster_path
@@ -187,20 +215,23 @@ const getProviderLink = (providerName, movieTitle) => {
                     : "https://via.placeholder.com/500x750?text=No+Image",
                   overview: movie.overview,
                   vote_average: movie.vote_average,
+                  year: movie.release_date ? new Date(movie.release_date).getFullYear().toString() : new Date().getFullYear().toString(),
                 };
 
-                isInWatchlist
-                  ? dispatch(removeFromWatchlist(movie.id))
-                  : dispatch(addToWatchlist(movieData));
+                if (isInWatchlist) {
+                  dispatch(removeFromWatchlistAsync({ userId: user.id, movieId: movie.id.toString() }));
+                } else {
+                  dispatch(addToWatchlistAsync({ userId: user.id, movieData }));
+                }
               }}
               className={`mt-3 px-4 py-2 font-semibold rounded-lg flex items-center gap-2 transition ${
-                isInWatchlist
+                isInWatchlist && isAuthenticated
                   ? "bg-red-600 hover:bg-red-700"
                   : "bg-green-600 hover:bg-green-700"
               }`}
             >
-              {isInWatchlist ? <FaCheck /> : <FaPlus />}
-              {isInWatchlist ? "Remove from Watchlist" : "Add to Watchlist"}
+              {isInWatchlist && isAuthenticated ? <FaCheck /> : <FaPlus />}
+              {isInWatchlist && isAuthenticated ? "Remove from Watchlist" : "Add to Watchlist"}
             </button>
           </div>
         </div>

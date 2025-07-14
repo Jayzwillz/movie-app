@@ -1,18 +1,30 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaBars, FaTimes, FaSearch } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { FaBars, FaTimes, FaSearch, FaUser, FaSignOutAlt } from "react-icons/fa";
+import { logout } from "../redux/authSlice";
 import Logo from "../assets/Logo.png";
 
 const Navbar = ({ setSearchTerm }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const navigate = useNavigate(); // ✅ Allows redirection
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    if (!setSearchTerm) return; // Prevents errors if not passed
+    if (!setSearchTerm) return;
     setSearchTerm(query);
-    navigate("/search"); // ✅ Redirects to search results
+    navigate("/search");
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    setUserMenuOpen(false);
+    navigate("/");
   };
 
   return (
@@ -46,6 +58,62 @@ const Navbar = ({ setSearchTerm }) => {
               <FaSearch />
             </button>
           </form>
+
+          {/* Authentication Section */}
+          {isAuthenticated ? (
+            <div className="relative">
+              <button
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                className="flex items-center gap-2 px-3 py-1 rounded-md hover:bg-gray-700 transition-colors"
+              >
+                <FaUser className="h-4 w-4" />
+                <span className="hidden lg:block">{user?.name}</span>
+              </button>
+              
+              {userMenuOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-gray-700 rounded-md shadow-lg py-1 z-50">
+                  <Link
+                    to="/profile"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="block px-4 py-2 text-sm text-white hover:bg-gray-600"
+                  >
+                    Profile
+                  </Link>
+                  {user?.role === 'admin' && (
+                    <Link
+                      to="/admin"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="block px-4 py-2 text-sm text-white hover:bg-gray-600"
+                    >
+                      Admin Dashboard
+                    </Link>
+                  )}
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-600"
+                  >
+                    <FaSignOutAlt className="inline mr-2" />
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center gap-4">
+              <Link
+                to="/login"
+                className="text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                className="bg-blue-600 hover:bg-blue-700 px-4 py-1 rounded-md transition-colors"
+              >
+                Sign Up
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -64,6 +132,47 @@ const Navbar = ({ setSearchTerm }) => {
             <Link to="/genres" onClick={() => setMenuOpen(false)} className="hover:underline">Genres</Link>
             <Link to="/top-rated" onClick={() => setMenuOpen(false)} className="hover:underline">Top Rated</Link>
             <Link to="/watchlist" onClick={() => setMenuOpen(false)} className="hover:underline">Watchlist</Link>
+
+            {/* Mobile Authentication */}
+            {isAuthenticated ? (
+              <div className="border-t border-gray-700 mt-2 pt-2">
+                <Link
+                  to="/profile"
+                  onClick={() => setMenuOpen(false)}
+                  className="block py-1 hover:underline"
+                >
+                  <FaUser className="inline mr-2" />
+                  {user?.name}
+                </Link>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setMenuOpen(false);
+                  }}
+                  className="block py-1 hover:underline text-left"
+                >
+                  <FaSignOutAlt className="inline mr-2" />
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <div className="border-t border-gray-700 mt-2 pt-2 flex gap-4">
+                <Link
+                  to="/login"
+                  onClick={() => setMenuOpen(false)}
+                  className="text-blue-400 hover:text-blue-300"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={() => setMenuOpen(false)}
+                  className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-md"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
 
             {/* Mobile Search Bar */}
             <form onSubmit={handleSearchSubmit} className="relative mt-2">
