@@ -112,11 +112,13 @@ const Watchlist = () => {
           {watchlist.map((movie) => (
             <div key={movie.movieId || movie.id} className="bg-gray-800 p-4 rounded-lg shadow-lg">
               <Link to={`/movie/${movie.movieId || movie.id}`} className="block">
-                <img
-                  src={movie.poster}
-                  alt={movie.title}
-                  className="w-full h-64 object-cover rounded-md"
-                />
+                <div className="relative w-full aspect-[2/3] bg-gray-700 rounded-md overflow-hidden">
+                  <img
+                    src={movie.poster}
+                    alt={movie.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
                 <h3 className="text-lg font-semibold mt-2">{movie.title}</h3>
                 {movie.year && (
                   <p className="text-gray-400 text-sm">{movie.year}</p>

@@ -50,14 +50,16 @@ const MovieCard = ({ id, title, poster, overview }) => {
   };
 
   return (
-    <div className="movie-card bg-gray-900 p-4 rounded-lg shadow-lg text-white text-left"> {/* Left-aligned text */}
-      <img
-        src={poster}
-        alt={title}
-        className="w-full h-64 object-cover rounded-md"
-      />
-      <h3 className="text-lg font-semibold mt-2">{title}</h3>
-      <p className="text-sm text-gray-400">
+    <div className="movie-card bg-gray-900 p-3 rounded-lg shadow-lg text-white text-left"> {/* Left-aligned text */}
+      <div className="relative w-full aspect-[2/3] bg-gray-800 rounded-md overflow-hidden">
+        <img
+          src={poster}
+          alt={title}
+          className="w-full h-full object-cover"
+        />
+      </div>
+      <h3 className="text-base font-semibold mt-2">{title}</h3>
+      <p className="text-xs text-gray-400">
         {overview ? overview.slice(0, 100) : "No overview available"}...
       </p>
       <div className="flex justify-between items-center mt-3">

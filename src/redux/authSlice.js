@@ -18,8 +18,7 @@ export const registerUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await authAPI.register(userData);
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
+      // Email verification is required - don't store token
       return response;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Registration failed');
@@ -72,6 +71,7 @@ const initialState = {
   ...loadUserFromStorage(),
   isLoading: false,
   error: null,
+  registrationMessage: null,
   isAuthenticated: !!loadUserFromStorage().token,
 };
 
@@ -89,6 +89,20 @@ const authSlice = createSlice({
     },
     clearError: (state) => {
       state.error = null;
+      state.registrationMessage = null;
+    },
+    // Google auth actions
+    loginSuccess: (state, action) => {
+      state.isLoading = false;
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+      state.isAuthenticated = true;
+      state.error = null;
+    },
+    loginFailure: (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+      state.isAuthenticated = false;
     },
   },
   extraReducers: (builder) => {
@@ -100,9 +114,8 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
-        state.isAuthenticated = true;
+        // Email verification required - show verification message
+        state.registrationMessage = action.payload.message;
         state.error = null;
       })
       .addCase(registerUser.rejected, (state, action) => {
@@ -158,5 +171,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, clearError } = authSlice.actions;
+export const { logout, clearError, loginSuccess, loginFailure } = authSlice.actions;
 export default authSlice.reducer;

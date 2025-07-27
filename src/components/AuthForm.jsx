@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { GoogleLogin } from '@react-oauth/google';
 import { loginUser, registerUser, clearError } from '../redux/authSlice';
 import { Link } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import axios from 'axios';
 
 const AuthForm = ({ isLogin = true }) => {
   const dispatch = useDispatch();
-  const { isLoading, error } = useSelector((state) => state.auth);
+  const { isLoading, error, registrationMessage } = useSelector((state) => state.auth);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -36,6 +38,45 @@ const AuthForm = ({ isLogin = true }) => {
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      dispatch(clearError());
+      
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/google`, {
+        credential: credentialResponse.credential
+      });
+
+      if (response.data.token) {
+        // Store token in localStorage
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        
+        // Update Redux state
+        dispatch({
+          type: 'auth/loginSuccess',
+          payload: {
+            user: response.data.user,
+            token: response.data.token,
+            isAuthenticated: true
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Google login error:', error);
+      dispatch({
+        type: 'auth/loginFailure',
+        payload: error.response?.data?.message || 'Google login failed'
+      });
+    }
+  };
+
+  const handleGoogleError = () => {
+    dispatch({
+      type: 'auth/loginFailure',
+      payload: 'Google login was unsuccessful'
+    });
   };
 
   return (
@@ -135,6 +176,30 @@ const AuthForm = ({ isLogin = true }) => {
           {error && (
             <div className="bg-red-900 border border-red-700 text-red-100 px-4 py-3 rounded">
               {error}
+              {error.includes('verify your email') && (
+                <div className="mt-2">
+                  <Link
+                    to="/resend-verification"
+                    className="text-red-300 hover:text-red-200 underline text-sm"
+                  >
+                    Resend verification email
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
+
+          {registrationMessage && (
+            <div className="bg-green-900 border border-green-700 text-green-100 px-4 py-3 rounded">
+              {registrationMessage}
+              <div className="mt-2">
+                <Link
+                  to="/resend-verification"
+                  className="text-green-300 hover:text-green-200 underline text-sm"
+                >
+                  Didn't receive the email? Click here to resend
+                </Link>
+              </div>
             </div>
           )}
 
@@ -153,6 +218,37 @@ const AuthForm = ({ isLogin = true }) => {
                 isLogin ? 'Sign In' : 'Sign Up'
               )}
             </button>
+          </div>
+
+          {isLogin && (
+            <div className="text-center">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                Forgot your password?
+              </Link>
+            </div>
+          )}
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-600" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-gray-900 text-gray-400">Or continue with</span>
+            </div>
+          </div>
+
+          <div className="w-full">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              theme="filled_blue"
+              size="large"
+              text={isLogin ? "signin_with" : "signup_with"}
+              shape="rectangular"
+            />
           </div>
         </form>
       </div>
