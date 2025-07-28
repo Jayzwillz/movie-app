@@ -4,6 +4,9 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { addToWatchlist, removeFromWatchlist, addToWatchlistAsync, removeFromWatchlistAsync } from "../redux/watchlistSlice";
 import { ACCESS_TOKEN, BASE_URL } from "../config";
+import AIReviewAnalysis from "./AIReviewAnalysis";
+import AIMovieAnalysis from "./AIMovieAnalysis";
+import { AIChatButton } from "./AIChatbot";
 import { 
   FaArrowLeft, 
   FaPlus, 
@@ -31,7 +34,8 @@ import {
   FaFire,
   FaHeart,
   FaComment,
-  FaFlag
+  FaFlag,
+  FaRobot
 } from "react-icons/fa";
 import { 
   FaFacebook, 
@@ -889,6 +893,34 @@ const VideoModal = () => (
             <FaUsers className="w-6 h-6 text-purple-400 mx-auto mb-2" />
             <p className="text-gray-400 text-sm">Popularity</p>
             <p className="font-semibold">{movie.popularity?.toFixed(0) || "N/A"}</p>
+          </div>
+        </div>
+
+        {/* AI-Powered Features Section */}
+        <div className="space-y-8">
+          {/* AI Movie Analysis */}
+          <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-2xl font-bold flex items-center gap-3">
+                <FaRobot className="text-blue-400" />
+                AI Movie Analysis
+              </h3>
+              <AIChatButton movieTitle={movie.title} />
+            </div>
+            <AIMovieAnalysis movieData={movie} />
+          </div>
+
+          {/* AI Review Analysis */}
+          <div className="bg-gray-800/30 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
+            <h3 className="text-2xl font-bold flex items-center gap-3 mb-6">
+              <FaRobot className="text-purple-400" />
+              AI Review Analysis
+            </h3>
+            <AIReviewAnalysis 
+              movieId={id} 
+              movieTitle={movie.title} 
+              tmdbReviews={reviews.filter(r => r.source === 'tmdb')} 
+            />
           </div>
         </div>
 

@@ -23,6 +23,7 @@ import EmailVerified from "./components/EmailVerified";
 import ResendVerification from "./components/ResendVerification";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
+import AIFeaturesPage from "./pages/AIFeaturesPage";
 import Footer from "./components/Footer";
 
 // Scroll to top component
@@ -60,6 +61,7 @@ const App = () => {
                   <Route path="/genres" element={<Genre />} />
                   <Route path="/watchlist" element={<Watchlist />} />
                   <Route path="/search" element={<SearchResults searchTerm={searchTerm} />} />
+                  <Route path="/ai-features" element={<AIFeaturesPage />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
                   <Route path="/profile" element={<Profile />} />

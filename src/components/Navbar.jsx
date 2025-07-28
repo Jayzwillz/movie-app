@@ -69,6 +69,9 @@ const Navbar = ({ setSearchTerm }) => {
           <Link to="/genres" className="hover:underline text-sm">Genres</Link>
           <Link to="/top-rated" className="hover:underline text-sm">Top Rated</Link>
           <Link to="/watchlist" className="hover:underline text-sm">Watchlist</Link>
+          <Link to="/ai-features" className="hover:underline text-sm bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent font-medium">
+            🤖 AI Features
+          </Link>
 
           {/* Search Bar */}
           <form onSubmit={handleSearchSubmit} className="relative">
@@ -183,6 +186,13 @@ const Navbar = ({ setSearchTerm }) => {
                 >
                   Watchlist
                 </Link>
+                <Link
+                  to="/ai-features"
+                  onClick={() => setNavDropdownOpen(false)}
+                  className="block px-4 py-2 text-sm text-white hover:bg-gray-600 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent font-medium"
+                >
+                  🤖 AI Features
+                </Link>
               </div>
             )}
           </div>
@@ -276,6 +286,9 @@ const Navbar = ({ setSearchTerm }) => {
             <Link to="/genres" onClick={() => setMenuOpen(false)} className="hover:underline text-sm">Genres</Link>
             <Link to="/top-rated" onClick={() => setMenuOpen(false)} className="hover:underline text-sm">Top Rated</Link>
             <Link to="/watchlist" onClick={() => setMenuOpen(false)} className="hover:underline text-sm">Watchlist</Link>
+            <Link to="/ai-features" onClick={() => setMenuOpen(false)} className="hover:underline text-sm bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent font-medium">
+              🤖 AI Features
+            </Link>
 
             {/* Mobile Authentication */}
             {isAuthenticated ? (
